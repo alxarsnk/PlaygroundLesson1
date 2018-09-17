@@ -87,6 +87,8 @@ class Unit {
     var damage: Int
     var defend: Int
     var sneaky: Int
+    var wins: Int = 0
+    var loses: Int = 0
     var nickname: String
      init (health: Int, damage: Int,  defend: Int, sneaky: Int, nickname: String) {
         self.health = health+defend
@@ -97,6 +99,8 @@ class Unit {
     }
     func attack (toEnemy: Unit) {
         toEnemy.health=toEnemy.health-(damage*sneaky/defend)
+        wins += 1
+        toEnemy.loses += 1
      }
     func statusinfo() {
         if health <= 0 {
@@ -146,13 +150,51 @@ class BattleField {
     }
     func multiplayerBattle (units: [Unit]) {
         print ("\n Let's start a fight!! \n")
+        var winRatingList: [Int] = []
+        units.forEach { _ in winRatingList.append(0) }
+        var loseRatingList: [Int] = []
+        units.forEach { _ in loseRatingList.append(0) }
         var isGameEnd: Bool = false
         var unitsCopy: [Unit] = units
         var unitsCopyCount: Int = unitsCopy.count
+        var top1: Int = -100
+        var top1Name: String = " "
+        var top2: Int = -100
+        var top2Name: String = " "
+        var top3: Int = -100
+        var top3Name: String = " "
         while !unitsCopy.isEmpty  {
              for unit in unitsCopy {
                 if unitsCopy.count == 1 {
-                    print ("\(unit.nickname) THIS IS THE WINNER with (\(unit.health))")
+                    print ("\(unit.nickname) THIS IS THE WINNER with (\(unit.health)) \n")
+                    print( " It's time to status \n ")
+                    for unit in units {
+                      print ("Wins of \(unit.nickname)  --  \(unit.wins) and his loses -- \(unit.loses) ")
+                    }
+                    print("TOP 3 OF PLAYERS")
+                    for unit in units {
+                        if unit.wins - unit.loses > top1 {
+                            top1 = unit.wins - unit.loses
+                            top1Name = unit.nickname
+                        }
+                        
+                    }
+                    for unit in units {
+                        if unit.wins - unit.loses > top2 && unit.wins - unit.loses < top1 {
+                            top2 = unit.wins - unit.loses
+                            top2Name = unit.nickname
+                        }
+                        
+                    }
+                    for unit in units {
+                        if unit.wins - unit.loses > top3 && unit.wins - unit.loses < top2 {
+                            top3 = unit.wins - unit.loses
+                            top3Name = unit.nickname
+                        }
+                        
+                    }
+                    print (" TOP1 \(top1Name) -- \(top1) \n TOP2 \(top2Name) -- \(top2) \n TOP3 \(top3Name) -- \(top3) ")
+                    
                     isGameEnd = true
                 }
                 else {
@@ -190,7 +232,8 @@ class BattleField {
               else {
                 
                 print ("Look!   \(temp1.nickname) (\(temp1.health)) shot by (\(temp1.damage))  into  \(temp2.nickname) and set his health from (\(temp2.health+temp1.damage)) to (\(temp2.health))\n")
-    
+                winRatingList[random1] += 1
+                loseRatingList[random2] += 1
                 }
             }
         }
@@ -203,8 +246,10 @@ let u3 = Maga(health: 200, damage: 23, defend: 44, sneaky: 23, nickname: "Alexey
 let u4 = Knight(health: 134, damage: 44, defend: 13, sneaky: 50, nickname: "Misha")
 let u5 = Assasin(health: 344, damage: 14, defend: 44, sneaky: 40, nickname: "Gleb")
 let u6 = Knight(health: 314, damage: 34, defend: 13, sneaky: 49, nickname: "Kolya")
+let u7 = Maga(health: 200, damage: 50, defend: 50, sneaky: 50, nickname: "Danis")
+let u8 = Assasin(health: 400, damage: 100, defend: 100, sneaky: 100, nickname: "Danis")
 
-var list: [Unit] = [u1, u2, u3, u4, u5, u6]
+var list: [Unit] = [u1, u2, u3, u4, u5, u6, u7, u8]
 
 let ukraina = BattleField()
 ukraina.battleBetweenTwoPlayers(player1: u1, player2: u2)
